@@ -1,0 +1,9 @@
+# R generated files
+.RData
+.Rhistory
+.Rproj.user/
+*.Rproj
+
+# OS generated files
+.DS_Store
+~$*
