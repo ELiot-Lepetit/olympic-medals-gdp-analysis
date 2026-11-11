@@ -1,0 +1,983 @@
+---
+title: "Olympic Games"
+author: "Raphaelle Dridi, Carla Le Durand, Eliot Lepetit"
+date: "`r Sys.Date()`"
+output: 
+  prettydoc::html_pretty:
+      theme: cayman
+      css : styles.css
+      df_print : paged
+      toc : true 
+      df_summary : "caption+ftable"
+      highlight: github
+      math : katex
+---
+<style>
+body {
+text-align: justify}
+</style>
+  
+________________________________________________________________________________
+
+
+<center>
+
+### I. Introduction
+
+</center>
+ 
+
+#### 1) Motivations 
+In Paris, on Friday, July 26, 2024 will begin the 2024 Summer Olympics. The Olympic Games are a worldwide multi-sport competition that takes place every 4 years. There is an alternation every 2 years between the Winter and Summer Olympic Games. This sporting event, which is the most watched in the world, is of major importance for the country which organizes it since it is a vector of economic development but also for all the other participating countries, since they allow the visibility of the countries and the development of the sporting disciplines. Nevertheless, some aspects of the Olympic Games tend to reproduce the structural inequalities of the countries. Indeed, if the hard sciences bring a first explanation of common sense to the gain of a medal by an athlete thanks to his physical characteristics, it is not enough. The economic and human resources of a country also seem to influence the number of medals won at the Olympic Games. In existing works, a correlation appears between the GDP per capita and the population of a country and the number of medals won [1]. Indeed, a large budget allocated by countries to sports practices allows them to have infrastructures, equipments and qualified coaches, thus promoting a more important selection of their athletes at the Olympic Games and therefore better results. More recent works add to this analysis a study based on individual data per athlete and no longer per country, which makes it possible to differentiate the number of medals won by Olympic discipline[2].
+
+
+#### 2) Research question 
+
+Therefore, our research question will be:
+
+<center>
+
+**To what extent is the economic power of a country reflected through the Olympic Games?**
+
+</center>
+
+#### 3) Literature review 
+There is a long-standing belief that the economic power of a country is reflected in its performance at the Olympic Games. This literature review aims to explore the extent to which economic power is reflected through the Olympic Games.
+
+Several studies have investigated the relationship between economic power and Olympic success. An analysis of the medal count at the 2012 London Olympics found that countries with higher GDP per capita tend to perform better at the Olympics (Ming et al., 2013). Similarly, a study of the 2008 Beijing Olympics found that countries with larger economies tend to win more medals (Xu et al., 2013).
+
+Other researchers have suggested that factors beyond economic power, such as government support and infrastructure, can also impact a country's performance at the Olympics. A study of the 2016 Rio Olympics found that government funding for sport is an important predictor of Olympic success, even after controlling for economic factors (Araújo et al., 2019).
+
+In addition to government support, cultural factors have also been identified as important predictors of Olympic success. A study of the 2014 Sochi Olympics found that countries with a history of winter sports tend to perform better at the Winter Olympics, regardless of their economic power (Breuer & Wicker, 2015). Another study found that cultural values, such as the importance placed on individual achievement, can also impact Olympic success (Stambulova et al., 2020).
+
+The economic power is a factor that can impact a country's performance at the Olympic Games and we will try to understand the mechanism that leads to winning more medals.
+
+
+#### 4) Hypothesis 
+
+- `1st`: countries with a higher GDP win more medals. 
+
+- `2nd`: the more athletes a country has at the Olympic Games, the more medals it wins. 
+
+- `3rd`: the number of medals won depends on the place given to sport in the culture of the country. 
+
+
+#### 5) Why is this study different ?
+
+
+The studies that we have found on this subject deal in a general way with the correlation between the GDP of the country and the number of medals won at the Olympic Games. We will therefore deep dive by analyzing the number of athletes participating and by checking if this hypothesis holds according to the public expenditure on sports. It is difficult to collect objective data on the place of a sport in the culture of a country, which is why in the current work only certain countries have been studied in isolation, such as Croatia[3]. 
+
+We want to go beyond this by means of a comparative study between countries in terms of investment in sport activities. There is no database that directly tracks sport funding for each country. In order to overcome this problem, we have taken a database that gives the levels of public spending on leisure, culture and worship. We assume that these expenditures are representative of public spending on sport, or at least we have a good order of magnitude for these developed by the International Monetary Fund website. 
+
+We also tried to find out if the place given to sport in each country influenced the number of medals won. Again, there is no database with the number of hours spent on sport in each country. We took the values from an article "Global Views on Exercise and team sports" by Ipsos published in July 2021, a French polling company and an international opinion marketing firm.
+
+<center>
+
+### II - Data presentation   
+  
+    
+</center>  
+
+
+#### 1) Databases 
+
++ The olympic athletes and their medals : this database contains all the participants in the summer and winter Olympic games from 1896 to 2016. The data is publicly available at Olympic EDA (Economy Effect) 120 years of Olympic history: athletes and results from Kaggle. 
+
++ GDP2016 : this database contains the GDP of countries expressed in dollars, it is from The World Bank.
+
++ GDP2016PERCAPITA : this database  indicates the countries' GDP per capita data in 2016, it is also from The World Bank. 
+
++ Population2016 : this database contains the number of inhabitants per country in 2016, again it is from The World Bank. 
+
++ Loisirs : this database gives levels of public spending on recreation, culture and worship, it is from the International Monetary Fund website.
+
++ TimeExercicesperweek : there is no database with the number of hours devoted to sport in each country. We used the values from an article "Global Views on Exercise and team sports" by Ipsos published in July 2021, a French polling company and an international opinion marketing company. This database was established from a survey of 21,503 online adults aged 16-74 across 29 countries. It has not been adjusted to the population size of each country and is not intended to suggest a total result.
+
++ CollectiveSport : the list of the collective sports. 
+
+
+#### 2) Data limitation  
+
+We have chosen the 2016 summer games that take place in Rio, so will the results we find be generalizable to all games ? Since for these games we have particularities like: Russia which was suspended from athletics, Kuwait totally suspended from the Olympics, the abandonment of athletes related to the epidemic of the Zika virus or athletes suspended for doping. 
+In addition to that, in some databases we have missing values due to the lack of information. For example, the number of hours allocated to sports in a week database do not include every country participating in the Olympic Games, some are missing such as Brazil or India. This could create a bias in our analysis. 
+
+
+#### 3) Data cleaning 
+
+##### a) Presentation of the data 
+
+```{r,eval=FALSE, include=FALSE}
+install.packages("readxl")
+install.packages("tidyverse")
+install.packages("rmarkdown")
+install.packages("knitr")
+install.packages("formattable")
+install.packages("modelsummary")
+install.packages("DT")
+install.packages("DiagrammeR")
+install.packages("maps")
+install.packages("mapdata")
+install.packages("gridExtra")
+install.packages("stargazer")
+install.packages("cowplot")
+install.packages("prettydoc")
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+#Load necessary packages 
+library(readxl) 
+library(tidyverse)
+library(rmarkdown)
+library(knitr)
+library(formattable)
+library(DT)
+library(DiagrammeR)
+library(modelsummary)
+library(maps)
+library(mapdata)
+library(gridExtra)
+library(stargazer)
+library(cowplot)
+library(prettydoc)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+#Import the 2016 Olympic Athletes Database from csv file:
+athlete_events <- read_csv("Data/athlete_events.csv")
+
+#Display the name of each variable 
+names(athlete_events)
+```
+First we display the first five observations of the atheletes dataset :
+  
+5 first rows of the athlete dataset :
+```{r echo=FALSE}
+datatable(athlete_events[1:5,], options = list(pageLength = 5),caption="The 5 first rows of the dataset ")
+```
+
+  
+We then import the 6 other databases : GDP, GDP per Capita, Population, % GDP of Leisure, Culture and Work ship expenditure, Hours per week dedicated to sport exercise and finally the collective sports list.
+
+```{r, include=FALSE}
+#Import the GDP Database from xls file:
+  GDP <- read_excel("Data/GDP2016.xlsx")
+  
+  #We divide the GDP values to express them in billions of dollars
+  GDP$GDP2016<-(GDP$GDP2016)/1e+9
+  
+  #Import the GDP per Capita Database from xls file:
+  GDPperCapita <- read_excel("Data/GDP2016PERCAPITA.xlsx")
+  
+  #Import the Population sizes by country in 2016 Database from xls file:
+  Population2016 <- read_excel("Data/Population2016.xlsx")
+  
+  #Population values are divided by 1e+3
+  Population2016$Population<-(Population2016$Population)/1e+3
+  
+  # Import the % GDP of Leisure, Culture and Workship expenditure in 2016 Database from xls file:
+  Loisirs <- read_excel("Data/Loisirs.xlsx")
+  
+  #Import the number of hours allocated to sports per week in each country Database from xls file: 
+  TimeExercices <- read_excel("Data/TimeExercicesperweek.xlsx")
+  
+  #Import the file with the list of the collective sports from xls file :
+  CollectiveSport <-read_excel("Data/Sportscollectifs.xlsx")
+```
+
+The variables of the dataset are briefly descrived below. 
+
+The athlete dataset contains in total 15 variables, we will focus on 9 variables, those are : 
+
+- `ID`: the athletes' ID 
+
+- `Name`: athletes' names 
+
+- `Team`: athletes' team (country) 
+
+- `Sex`: gender of participants (M or F)
+
+- `Age`: age of the participants 
+
+- `NOC`: international codification of country names 
+
+- `Sport`: sport of the Olympic Games.
+
+- `Event`: the subcategory of sport.
+
+- `Medal`: the type of medals they won: gold, silver, bronze or no medal. 
+
+And in the 5 others databases we have chosen the 6 following variables : 
+
+- `GDP`: GDP in billions of $ of each country.
+
+- `GPDperCAPITA`: GDP per capita in $ of each country.
+
+- `Population`: population in million of each country.
+
+- `Loisirs`: Spending on leisure, culture and worship.
+
+- `HoursperWeek`: the number of hours per week spent in sport by country. 
+
+- `CollectiveSport`: the list of the collective sports. 
+
+In total we have 15 variables.
+
+##### b) Selection of a specific year of the Olympic Games  
+
+We now look at the range of our Year variable in order to choose a year.
+
+```{r echo=FALSE}
+datasummary_skim(athlete_events$Year,fmt = "%.0f")
+```
+
+We choose the most recent year (the max) : 2016.
+```{r, include=FALSE}
+data_athlete_events<-athlete_events%>%
+  group_by(Year)%>%
+  filter(Year=="2016")%>%
+  ungroup()%>%select(ID,Name,Team,NOC,Sex,Sport,Event,Medal,Age)
+```
+
+##### c) Merge databases and missing values treatment
+
+For the variable "Medals", we replace the missing values "NA" representing the athletes that did not win any medals by "No Medal". 
+
+```{r, include=FALSE}
+data_athlete_events$Medal[is.na(data_athlete_events$Medal)]="No Medal"
+```
+
+There are different ways to distinguish sports either by the number of players (individual, two, team), the equipment or even the part of the body trained. We have decided to analyze the 2 following sports categories : individual and collective. So we created the variable SportCategory which can be either Collective of Individual.
+
+```{r, include=FALSE}
+#For the variable "Event", we delete the apostrophe " ' " character in order to manipulate easier the #data. 
+for (i in 1:nrow(data_athlete_events)) 
+  {
+  data_athlete_events$Event[i]=gsub("'", "",data_athlete_events$Event[i])
+  }
+data_athlete_events=data_athlete_events %>%
+  mutate(SportCategory=case_when(Event %in% CollectiveSport$CollectiveSports ~ "Collective"))
+data_athlete_events$SportCategory[is.na(data_athlete_events$SportCategory)]="Individual"
+```
+
+First we merge the 5 databases related to the information of the countries : GDP, GDP per capita, Population, expenditure on culture/sport and hours spent per week on sports.
+
+```{r, message=F,include=F}
+#Merge 1: merge the GDP data and the GDP per capita data
+GDPmerged<- left_join(GDP, GDPperCapita, by = "NOC")
+#and we merge the first database with the population data
+GDPmerged<- left_join(GDPmerged, Population2016, by = "NOC")
+
+#Merge 2: we add the Leisure expenses:
+GDPmerged2<- left_join(GDPmerged, Loisirs, by = "NOC")
+
+#Merge 3: we add the physical exercise time per week:
+GDPmerged3<- left_join(GDPmerged2, TimeExercices, by = "NOC")
+```
+
+The countries with missing values of GDP, GDP per capita or population are not significant for our study. Therefore we remove them from our merged database. In order to do that, we create a new database without the missing values.  
+
+```{r, message=F,include=F}
+#We create a new database without the missing values 
+GDPtreated <- subset(GDPmerged3, (GDP2016!= "NA")&
+                       (GDPperCAPITA2016!= "NA")&
+                       (Population!= "NA"))
+
+#We create a new variable LoisirsDollars to have the public expenditure allocated to sports 
+GDPtreated=GDPtreated%>%mutate(LoisirsDollars=PercentLoisirsGDP*GDP2016/100)
+
+```
+Finally, we simplify the Leisure ("LoisirsDollars") variable by giving it 4 possible outputs according to the number of dollars spent by each country on leisure, culture and worship : Low, Lower mid, Upper and High.
+
+```{r echo=FALSE}
+GDPtreated=GDPtreated%>%mutate(Loisirs=case_when(LoisirsDollars < 1 ~ "Low"
+                                               ,
+                                               (LoisirsDollars >= 1) & (LoisirsDollars < 3)  ~ "Lower mid"
+                                               ,
+                                               (LoisirsDollars >= 3) & (LoisirsDollars < 12)  ~ "Upper mid"
+                                               ,
+                                               LoisirsDollars >= 12 ~ "High"))
+```
+
+```{r, message=F,include=F}
+#We remove the missing values in our "Loisirs" variable :
+GDPtreatedsansNALoisirs<- subset(GDPtreated, (GDPtreated$Loisirs!= "NA"))
+```
+  
+
+##### d) Creation of dataframes 
+
+First, in order to have a dataframe with the athletes that have won a medal, we create a dataframe dataJO2 by removing all the athletes who did not get a medal. 
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+#We create a table dataJO2 by removing all the athletes who did not get a medal 
+dataJO2 <- data_athlete_events %>%
+  group_by(NOC) %>%
+  filter(Medal!= "No Medal")
+```
+
+We have `r nrow(dataJO2)` observations meaning that in total `r nrow(dataJO2)` medals have been distributed during the 2016 Olympic Games.
+
+For collective sports a medal is given to each athlete of the winning team and this is shown in the example below for the men soccer team who won the gold medal (Brazil) :
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+Men_Football<-dataJO2%>%filter((Event=="Football Mens Football") & (Medal=="Gold"))
+datatable(Men_Football, options = list(pageLength = 5),caption="List of the athletes having a gold medal for the Men football ")
+```
+
+`r nrow(Men_Football)` medals have been distributed but we should count only 1 in our study. So we have treated the data and we have assigned only 1 medal for a given winning collective team. 
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+#We create a table dataJO2_coll with only the collective sports and we force to 1 the number of medal for each team.
+data_JO2_coll <- dataJO2 %>%
+  filter(SportCategory=="Collective")%>%
+  group_by(NOC,Event,Sex,SportCategory) %>%
+  summarise(NumberMedals = n()) %>%
+  arrange(desc(NumberMedals)) %>% ungroup
+data_JO2_coll$NumberMedals[]=1
+
+#We create a table data_JO2_indiv with only the individual sports.
+data_JO2_indiv <- dataJO2 %>%
+  filter(SportCategory=="Individual")%>%
+  group_by(NOC,Event,Sex,SportCategory) %>%
+  summarise(NumberMedals = n()) %>%
+ arrange(desc(NumberMedals)) %>% ungroup
+
+#We merge the 2 collective and individual databases.
+data_JO2_coll_indiv <- data_JO2_coll %>%
+  bind_rows(data_JO2_indiv)
+```
+
+The dataframe taking into account only 1 medal for a given winning collective teams is : 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+datatable(data_JO2_coll_indiv, options = list(pageLength = 5),caption="Database treated for the collective sports")
+```
+
+We have now `r nrow(data_JO2_coll_indiv)` observations (instead of `r nrow(dataJO2)`) when we consider only 1 medal for a given winning collective team.
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+# Collective and individual sports :
+Coll_Indiv <- data_JO2_coll_indiv%>%group_by(SportCategory)%>%
+  summarise(Number=n(),Percent = percent(n()/nrow(.),2))%>%
+  ungroup()
+```
+
+And the distribution by sport category is :
+```{r echo=FALSE}
+kable(Coll_Indiv,"simple",caption="Distribution by sports category")
+Ratio<-nrow(data_JO2_indiv)/nrow(data_JO2_coll)
+```
+  
+We have `r round(Ratio,1)` more times medals won in individual sports than in collective sports.
+
+  
+```{r message=FALSE, warning=FALSE, include=FALSE}
+Medal2 <- data_JO2_coll_indiv %>%
+  group_by(NOC) %>%
+  summarise(NumberMedals = n()) %>%
+  arrange(desc(NumberMedals)) %>% ungroup
+```
+    
+We now plot the world map with the number of medals won per each country :
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+WorlData <- map_data('world')
+# We merge with GDP database to get the NOC and then with Medal2 to have the number of medal won
+WorlDatawithNOC<-left_join(WorlData, GDP, by = "region")
+WorlDatawithNb_medal<-left_join(WorlDatawithNOC, Medal2, by = "NOC")
+
+#Then we plot the world map.
+p <- ggplot()
+p <- p + geom_polygon(data=WorlData, aes(x=long, y=lat,group = group, fill=WorlDatawithNb_medal$NumberMedals),colour="white") + 
+         scale_fill_continuous(low = "thistle2", high = "darkred", guide="colorbar")
+P1 <- p + theme_bw()  + labs(fill = "legend" ,title = "Number of medals won by the country in 2016 :",x="",y="")
+P1 + scale_y_continuous(breaks=c()) + scale_x_continuous(breaks=c()) + theme(panel.border =  element_blank())+ylim(-60,90)
+```
+
+The countries winning more medals seem to be the countries with a higher economic power (high GDP) : USA, China, Russia. 
+  
+Table with the countries and the number of medals won in decreasing order: 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Display the top countries winning medals 
+datatable(Medal2, options = list(pageLength = 10),caption="The top 10 countries of the 2016 olympics ")
+```
+In this table, we have `r nrow(Medal2)` observations so `r nrow(Medal2)` countries that won medals.
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+###### 5) Table with the number of participation by athlete : 
+Athletes <- data_athlete_events %>%
+  group_by(ID, NOC, Sex, Age,SportCategory) %>%
+  summarise(NumberEvents = n()) %>%
+  arrange(-NumberEvents) %>%
+  ungroup()
+```
+
+
+Now, let's have a look at the number of athletes by country. 
+In the following table are displayed the countries with the most participants (male or female) in the 2016 Olympic Games.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+###### 6) Table with the number of participations in each country distinguishing men and women :
+# number of athletes by country and by category of sport
+Nb_Athletes_Pays_Cat_Sport <- Athletes %>%
+  group_by(NOC, Sex,SportCategory) %>%
+  summarise(NumberAthletes = n()) %>%
+  mutate(NOC_Sex_SportCategory = paste(NOC, Sex,SportCategory)) %>%
+  arrange(NOC_Sex_SportCategory) %>%
+  ungroup()
+
+# number of athletes by country 
+Nb_Athletes_Pays <- Athletes %>%
+  group_by(NOC, Sex) %>%
+  summarise(NumberAthletes = n()) %>%
+  mutate(NOC_Sex = paste(NOC, Sex)) %>%
+  arrange(NOC_Sex) %>%
+  ungroup()
+
+Nb_Athletes_Pays_table <- Nb_Athletes_Pays %>%
+  arrange(desc(NumberAthletes)) %>%
+  ungroup() %>%
+  select(NOC, Sex, NumberAthletes)%>%
+  top_n(20, NumberAthletes)
+
+datatable(Nb_Athletes_Pays_table, options = list(pageLength = 5),caption="Top 5 countries with the most athletes")
+```
+
+USA has the highest number of female athletes (333) and male athletes (308), making it the country with the most athletes overall (641). Brazil has the second highest number of male athletes (296) followed by France (265).
+China has the second highest number of female athletes (270) after the USA.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+Nb_Medal_par_Pays <- data_JO2_coll_indiv %>%
+  group_by(NOC, Sex,SportCategory) %>%
+  summarise(NumberMedals = n()) %>%
+  mutate(NOC_Sex_SportCategory = paste(NOC, Sex,SportCategory)) %>%
+  arrange(desc(NumberMedals)) %>% ungroup
+
+Nb_Medal_par_Pays_table = Nb_Medal_par_Pays %>% select(-NOC_Sex_SportCategory) 
+```
+
+
+##### e) Final dataframe
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+# We merge the dataframe NumberMedals and NumberAthletes :
+Data_JO3 <-inner_join(Nb_Medal_par_Pays,Nb_Athletes_Pays_Cat_Sport, by = "NOC_Sex_SportCategory")
+Data_JO3=Data_JO3%>%select(NOC.x,Sex.x,SportCategory.x,NumberAthletes,NumberMedals,NOC_Sex_SportCategory)
+names(Data_JO3)[1]<-"NOC"
+names(Data_JO3)[2]<-"Sex"
+names(Data_JO3)[3]<-"SportCategory"
+
+# We add the dataframe GDPtreated and create a variable Topcountries winning 15 medals and more :
+Datafinal2 <-left_join(Data_JO3, GDPtreated, by = "NOC")
+Datafinal2=Datafinal2%>%
+  mutate(Topcountries=ifelse(NumberMedals>=15,NOC_Sex_SportCategory,"<15"))%>%
+  mutate(NOC_Sex = paste(NOC, Sex))
+```
+
+  
+To have a better visualization of the distribution of GDP in 2016 and the population we switch to logarithmic scale using log.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+Datafinal2$GDP2016log=log(Datafinal2$GDP2016)
+Datafinal2$Populationlog=log(Datafinal2$Population)
+
+#We create a subset of this dataframe in which we simplify the names of countries that won less than 15 #medals at the 2016 Olympics. This will allow us to produce more readable graphs by highlighting the #countries that won the most medals without losing the information of the lesser medal winning countries. 
+
+Datafinal=Datafinal2%>%
+  select(-SportCategory,-NOC_Sex_SportCategory)%>%
+  group_by(NOC,GDP2016,GDPperCAPITA2016,Population,PercentLoisirsGDP,
+           HoursperWeek,LoisirsDollars,Loisirs,GDP2016log,Populationlog) %>%
+  summarise(NumberMedals=sum(NumberMedals),NumberAthletes=sum(NumberAthletes))%>%
+  arrange(-NumberMedals)%>%ungroup
+
+Datafinal=Datafinal%>%mutate(Topcountries=ifelse(NumberMedals>=15,NOC,"<15"))
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#We remove the missing values in our "Loisirs" variable.
+Data_final_sansNALoisirs2<- subset(Datafinal2, (Datafinal2$Loisirs!= "NA"))
+Data_final_sansNALoisirs<- subset(Datafinal, (Datafinal$Loisirs!= "NA"))
+```
+
+And we have created new variables that will help us in the statistical description part, these are : 
+
+- `PercentLoisirsGDP`: % of GDP in government budget expenditures allocated to culture, leisure and worship.
+
+- `NumberAthletes`: number of participating athletes per country.
+
+- `NumberMedals`: number of medals won by country.
+
+- `LoisirsDollars`: budget expenditures (in billions of dollars) allocated to culture, leisure and worship (PercentLoisirsGDP multiplied by GDP).
+
+Here is a display of the first rows of our final dataset : 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+datatable(Datafinal, options = list(pageLength = 5),caption="Our final dataset")%>%
+  formatRound(c("GDP2016","GDPperCAPITA2016","Population","PercentLoisirsGDP","HoursperWeek","LoisirsDollars","GDP2016log","Populationlog"), 2)
+```
+
+<center>
+
+### III. Descriptive statistics 
+  
+    
+</center>  
+
+
+#### 1. Control variables : 
+
+Distribution of the variables :
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Define personalized labels for each variable
+custom_labels <- c(
+  GDP2016log = "GDP 2016 Log",
+  GDPperCAPITA2016 = "GDP per Capita 2016",
+  Populationlog = "Population Log",
+  PercentLoisirsGDP = "GDP percentage spent on leisure",
+  NumberMedals = "Number of Medals won",
+  HoursperWeek = "Hours of training per Week",
+  NumberAthletes = "Number of Athletes"
+)
+
+Datafinal %>%
+  gather(key = "variable", value = "value", GDP2016log, GDPperCAPITA2016,
+         Populationlog, PercentLoisirsGDP, NumberMedals, HoursperWeek, NumberAthletes) %>%
+  ggplot(aes(x = value)) +
+  geom_histogram(fill = "darkblue", color = "white") +
+  facet_wrap(~ variable, scales = "free", labeller = labeller(variable = custom_labels)) +
+  labs(title = "Distribution of Selected Variables",
+       x = "Value",
+       y = "Count") +
+  theme_bw()
+
+```
+
+**Graph of the GDP of each country in 2016 (in billions of dollars, in log) : **
+
++ The GDP variable in billions dollars : to have a better visualization of the distribution of GDP in 2016 we switch to logarithmic scale using log. The GDP seems like a log-normal distribution, the mean is 913 billions dollars with an important dispersion of the sample going from 1.062 to 18700 billions  dollars (with only two countries reaching the most important GDP : the USA and China). 
+
+**Graph of the GDP per capita each country (in dollars):**
+
++ The GDP per capita variable in dollars representing the GDP variable divided by the population of each country, seems like a log-normal distribution. The mean is 27700 dollars and the dispersion of the sample is also important, it goes from 766 to 89436 dollars per inhabitant.
+
+**Graph of the number of hours per week spent in sport by country :** 
+
++ The Hours per week variable, representing the number of hours per week spent in sport by country, seems like a randomly distributed. We have only 26 observations since the information was available only for 26 countries. On average, an individual spends 6.3 hours on one or more sports per week with a dispersion from 3 to 12.8. The country where people are the most active is the Netherlands.
+
+**Graph of the number of participating athletes per country :**
+
++ The NumberAthletes variable, representing the number of participating athletes per country, seems to be also a decreasing exponential distribution. The median is 47 while the mean is 114 and the dispersion is from 4 to 641. There are many more countries with a very low number of athletes (50% have less than 47) and few countries with an number of athletes more than 300 (3rd quartil is 118 and maximum 641).
+
+**Graph of the number of medals by each country : **
+
++ The NumberMedals variable, representing the number of medals won by country, seems to be also a decreasing exponential distribution. The mean is 11 and the median is 5 which means that there are many more countries with a very low number of medals. 3r quartil is 11 and the maximum is 110 which leads to the conclusion that there are few countries winning more than fifty medals.
+
+**Graph of the percent of GDP spend on leisure, culture and worship :**
+
++ The PercentLoisirsGDP variable, representing the % of GDP spend on leisure, culture and worship, seems like a log-normal distribution. We have only 47 observations since the information was available only for 47 countries. The dispersion of the sample is also important, it goes from 0.165% to 3.25% with a mean equal 0.97%.
+
+**Graph of the population of each country (thousand inhabitants, in log): **
+
++ The Populationlog variable : to have a better visualization of the distribution of the population, we switch to logarithmic scale using log. It seems like a bimodal distribution. The average population in each country is 76.2 millions and the median 14.3 millions. It is varying from 120 000 (Granada) to 1.39 billions inhabitants in China.
+
+
+In order to have an idea of the age distribution, We make the histogram density of athletes age : 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Using the Sturges rule, we round a0 to 10, ak to 66 and we take a step of 4
+hist(Athletes$Age, prob=T, breaks=seq(10,66,4),main="The distribution of the athletes age",xlab='Age of the athletes')
+lines(density(Athletes$Age), col = "blue")
+```
+
+The majority of the athletes are between twenty and thirty years old. The youngest is 13 years old and the oldest is 62 years old.
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+# Gender of participants:
+Athletes_genre <- Athletes%>%group_by(Sex)%>%
+  summarise(nb_participants=n(),Pct = percent(n()/nrow(.),2))%>%
+  ungroup()
+```
+
+We now visualize the number of observations by gender :
+```{r echo=FALSE}
+kable(Athletes_genre,"simple",caption="The distribution by gender")
+```
+
+The parity is more or less respected.
+
+Now let's have a look at the number of participating countries and the number of observations per country.
+
+```{r echo=FALSE,message=FALSE, warning=FALSE}
+Country <- Athletes %>%
+  group_by(NOC)%>%
+  summarise(nb_participants=n(),Percent = round(100*percent(n()/nrow(.))))%>%
+  arrange(-nb_participants)
+hist(Country$nb_participants,prob=F, breaks=10,main="The distribution of the number of athletes by countries",xlab='Number of Athletes per country')
+```
+
+Most of the countries have less than 50 athletes participating and only 12 countries have more than 300 participants : USA, Brasil, Germany, Australia, France, China, Great Britain, Japan, Canada, Italy, Russia and then Spain. 
+
+
+Let's display now the number of medals won in each category of sport (collective and individual) differentiating on the gender of the athletes. 
+
+```{r message=FALSE, warning=FALSE,include=FALSE}
+Nb_Medal_par_Cat_Sport_et_Sex=Nb_Medal_par_Pays_table%>%select(-NOC)%>%
+  group_by(SportCategory,Sex)%>%
+  summarise(Sex,NumberMedals=sum(NumberMedals))%>%ungroup
+```
+
+```{r echo=FALSE}
+ggplot(data=Nb_Medal_par_Cat_Sport_et_Sex, aes(x=SportCategory, y=NumberMedals, fill=Sex)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  theme(axis.text.x = element_text(size=12,angle=45))+
+  labs(title = "Number of medals by categories of sports",
+       x = "Sub categories of sports",
+       y = "Number of medals",
+       caption = "Source : IMF - World Data Bank - Olympic games  (2016)")
+```
+
+First, we see here again that individual sports are represented more than two more times than the collective sports. 
+Then we note that there is no difference between men and women for the category collective sport whereas there is a difference for the individual sports. In individual sports, women win fewer medals than men. Women win about 300 medals compared to almost 400 medals for men. This can be explained by the fact that there are more events dedicated to men than women in individual sports :
+
+```{r message=FALSE, warning=FALSE,include=FALSE}
+women_event_co<-data_athlete_events%>%filter((Sex=="F")&(SportCategory=="Collective"))%>%
+  group_by(Event)%>%
+  summarise(n())%>%ungroup
+women_event_in<-data_athlete_events%>%filter((Sex=="F")&(SportCategory=="Individual"))%>%
+  group_by(Event)%>%
+  summarise(n())%>%ungroup
+men_event_co<-data_athlete_events%>%filter((Sex=="M")&(SportCategory=="Collective"))%>%
+  group_by(Event)%>%
+  summarise(n())%>%ungroup
+men_event_in<-data_athlete_events%>%filter((Sex=="M")&(SportCategory=="Individual"))%>%
+  group_by(Event)%>%
+  summarise(n())%>%ungroup
+```
+
+- for the collective sports, the number of events for the women is `r nrow(women_event_co)` and `r nrow(men_event_co)` for the men. 
+
+- for the individual sports, the number of events for the women is `r nrow(women_event_in)` and `r nrow(men_event_in)` for the men. 
+
+
+<center>
+
+### IV. Visualization of the data 
+  
+    
+</center>  
+
+First we plot the number of medals won according to GDP of the countries.
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(Datafinal, aes(x = GDP2016log, y = NumberMedals)) +
+  geom_point()+
+  labs(title = "Number of medals depending on the GDP (year 2016) :",
+       x = "GDP in billion dollars (in log)",
+       y = "Number of medals won",xlim=c(3,10),
+       caption = "Sources : IMF - World Data Bank - Olympic Games (2016)")
+
+```
+
+We can conclude that our first hypothesis is confirmed : countries with a higher GDP win more medals.  
+
+
+Our second hypothesis is that the more athletes a country has at the Olympic Games, the more medals it wins.
+
+First we look at the number of Athletes depending on the GDP.
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(Datafinal2, aes(x = GDP2016log, y = NumberAthletes,size = GDPperCAPITA2016, color = Sex)) +
+  geom_point() +
+  labs(title = "Number of Athletes depending on the GDP ",
+       x = "GDP in log",
+       y = "Number of Athletes",
+       caption = "Source : IMF - World Data Bank - Olympic games  (2016)")
+```
+
+We observe a positive correlation between the number of athletes and the GDP (confounding variable). And the variables GDP per capita and gender do not influence the number of athletes.
+
+Then we plot the graph of the number of medals according to the number of participants distinguishing women and men.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Datafinal2, aes(x = NumberAthletes, y = NumberMedals, color = Topcountries, label = ifelse(Datafinal2$Topcountries != "<15", Datafinal2$Topcountries, ""))) +
+  geom_text(size = 2, nudge_y = 3) +
+  geom_point() +
+  theme_minimal(base_size = 8)+
+  theme(# Color of the background and of its border
+    plot.background = element_rect(fill = "#DFE6EB"
+                                   , colour = "#DFE6EB"),
+    # Color of the grid lines
+    panel.grid = element_line(color = "gray85"))+
+  labs(title = "Number of medals according to the number of athletes distinguishing men and women",
+       x = "Number of athletes",
+       y = "Number of medals",
+       color = "Pays",
+       caption = "Source : IMF - World Data Bank - Olympic games  (2016)")
+```
+
+We can conclude that our second hypothesis is confirmed : the more athletes a country has at the Olympic Games, the more medals it wins. Category of sport (individual/collective) seems to influence the result while not the gender.
+
+
+Our third hypothesis is that the number of medals won depends on the place given to sport in the culture of the country. So we'll try figuring out if there is a relation between the number of athletes and the budget allowed to leisure, culture and worship in the different countries.
+
+Number of athletes and number of medals by sports expenditure :
+```{r echo=FALSE}
+plot1<-ggplot(Data_final_sansNALoisirs %>% group_by(Loisirs) %>% summarise(mean = mean(NumberAthletes)), aes(x = reorder(Loisirs, mean), y = mean)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Sports expenditure",
+       y = "Number of athletes")
+
+plot2<-ggplot(Data_final_sansNALoisirs %>% group_by(Loisirs) %>% summarise(mean = mean(NumberMedals)), aes(x = reorder(Loisirs, mean), y = mean)) +
+  geom_bar(stat = "identity") +
+  labs(x ="Sports expenditure",
+       y = "Number of medals")
+plot_grid(plot1, plot2, ncol = 2, nrow = 1)
+```
+
+We observe that there is no difference in the number of athletes between the lower mid and low categories. The category "Upper mid" of sports expenditure presents a little more athletes and the category "High" presents much more athletes, more than double of the previous category. We can thus think that there is an exponential growth of the number of athletes when the sports expenditure increases. The larger the leisure budget, the more athletes participate so our third hypothesis could be related.
+
+Moreover, the bigger the leisure budget, the better the chance to win more medals.The relationship between sports expenditure and number of medals seems to be the same as the previous one. The number of medals won by the "High" category is significantly higher than the other categories. In particular, the "High" category wins more than three times as many medals as the "Upper mid" category.
+
+  
+Number of medals according to GDP differentiated by the leisure budget and the number of participants per country : 
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(Datafinal, aes(x = GDP2016log, y = NumberMedals, size = PercentLoisirsGDP, color = NumberAthletes)) +
+  geom_point()+ xlim(4, 10) +
+  labs(title = "Number of medals depending on the GDP",
+       x = "GDP",
+       y = "Number of medals",
+       caption = "Sources : IMF - World Data Bank - Olympic Games (2016)")
+```
+
+The number of medals increases with the GDP as well as the number of athletes. It is less true for the expenditure on leisure : the countries with the highest GDP have a small share of it going to leisure. This is due to the fact that, given the very high GDP, it would take an astronomical expenditure on leisure for it to have a significant share in the GDP. 
+
+With these graphs, we can observe that there is a strong positive correlation between a country's GDP and their medal count at the Olympics. Countries with higher GDPs have more resources to invest in sports infrastructure, coaching, and athlete development, which lead to greater success in the Olympics. 
+The more the country invests in sports infrastructure, coaching, and athlete development, which allows to develop the practice of sports in the country, the more its number of athletes selected for the Olympic Games is important and thus the number of medals won increases. This is why the GDP of a country allows to increase its number of medals. 
+To go further than the correlation, we can try to establish a causal relationship between GDP and Olympic success. For that, it would be necessary to conduct regressions analysis.
+ 
+<center>
+
+### V. Regressions 
+  
+    
+</center>  
+
+
+Linear regression of the number of medals against GDP where the equation to estimate can be written :
+
+$$NbMedals = \alpha + \beta * ln GDP + \varepsilon_i$$
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(Datafinal%>% filter(NOC != "USA")%>% filter(NOC != "GER"), aes(x = GDP2016log, y = NumberMedals,color = NumberAthletes,size = PercentLoisirsGDP)) +
+  geom_point() + xlim(3, 10)+
+  geom_abline(slope = coef(lm(NumberMedals~GDP2016log, Datafinal))[2],
+              intercept = coef(lm(NumberMedals~GDP2016log, Datafinal))[1], color = "darkblue") +
+  labs(title = "Number of medals depending on the country's GDP",
+       x = "GDP in log of the country (in billions $)",
+       y = "Number of medals",
+       caption = "Source : IMF - World Data Bank - Olympic games  (2016)")
+```
+
+We observe a positive correlation between the number of medals won and the country's GDP (with still some outliers).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE,fig.align='center', results='asis'}
+fit1 <- lm(NumberMedals ~ GDP2016log,data = Datafinal2)
+
+stargazer(fit1,type="html",
+          title="Regression Table", single.row=TRUE,
+          ci=FALSE, ci.level=0.9, omit.stat=c("f", "ser"),covariate.labels = c("Log of GDP in 2016"), dep.var.caption ="Number of Medals")
+```
+
+According to these results, everything else equal, an increase of 1% of GDP makes an increase of 0.017 in number of medals ; which means that if we want an increase of 1 medal, then GDP should increase by 75%.
+
+The explanation is given below :
+
+$$NumberMedals = -5.516 + 1.788* ln GDP$$
+Meaning 1% increase of GDP makes an increase of 1.788/100 in number of medals. 
+  
+To find out how much we need to increase the GDP to get an extra medal, we do the following calculation : 
+$$NumberMedals2 = -5.516 + 1.788* ln GDP2$$
+$$NumberMedals2 - NumberMedals= 1 = 1.788 * ln GDP2-1.788* ln GDP$$
+$$1= 1.788* ln (GDP2/GDP)$$
+$$ln (GDP2/GDP)= 1/1.788$$
+$$GDP2/GDP= exp(1/1.788)=1.749 => 74.9\%$$
+
+Given that the p-value associated with β (slope) is lower than 1%, this value is statistically significantly different from 0 at the 99% confidence level.
+
+
+<center>
+
+### VI. Causality assessment
+  
+    
+</center>  
+
+
+The previous regression table documented a positive and statistically significant relationship between the GDP of a country and the probability for it to win medals during the Olympic Games. 
+If we were to increase the GDP of randomly selected countries, would they win more medals ?
+The estimated relationship could be partly driven by some confounding factors such as the number of athletes. Maybe a country with more athletes both comes from countries with a higher GDP and wins more medals because more athletes participate.
+But with or without more GDP, countries would still earn more medals when they have more athletes participating.
+
+The number of athletes is then acting as a confounding factor because it is correlated with both GDP and the number of medals. So we need to put the number of athletes variable in the regression as a control variable :
+
+$$NumberMedals = \alpha + \beta1 * ln GDP + \beta2 * NumberAthletes + \varepsilon_i$$
+```{r echo=FALSE, warning=FALSE}
+plot3<-ggplot(Datafinal, aes(x = GDP2016log, y = NumberMedals)) +
+  geom_point() + xlim(3, 10)+ ylim(0, 70)+
+  geom_abline(slope = coef(lm(NumberMedals~GDP2016log, Datafinal))[2],
+              intercept = coef(lm(NumberMedals~GDP2016log, Datafinal))[1], color = "darkblue") +
+  labs(x = "GDP in log of the country (in billions $)",
+       y = "Number of medals")
+
+plot4<-ggplot(Datafinal, aes(x = NumberAthletes, y = NumberMedals)) +
+  geom_point() + xlim(0, 700)+ ylim(0, 70)+
+  geom_abline(slope = coef(lm(NumberMedals~NumberAthletes, Datafinal))[2],
+              intercept = coef(lm(NumberMedals~NumberAthletes, Datafinal))[1], color = "darkblue") +
+  labs(x = "Number of Athletes",
+       y = "Number of medals")
+  
+plot_grid(plot3, plot4, ncol = 2, nrow = 1)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE,fig.align='center', results='asis'}
+fit2 <- lm(NumberMedals ~ GDP2016log+NumberAthletes,data = Datafinal2)
+
+stargazer(fit1,fit2,type="html",
+          title="Regression Table", single.row=TRUE,
+          ci=FALSE, ci.level=0.9, omit.stat=c("f", "ser"),covariate.labels = c("Log of GDP in 2016","Number of Athletes"), dep.var.caption ="Number of Medals")
+```
+
+When we add the control variable number of Athletes (confounding variable), the baseline coefficient changes significantly and becomes not significantly different from 0. We note the 18% change from 27.7% to 45.6%. 
+The correlation mechanism takes place through the variable of the number of athletes that a country has for the Olympic Games. Indeed, the GDP of the countries impacts its number of athletes and then, the number of athletes impacts in turn the number of medals won by the country. 
+
+Causal diagram :
+```{r echo=FALSE}
+liste_name<-c("Gross Domestic Product","Number of Athletes","Number of medals")
+DiagrammeR::grViz("
+  digraph graph2 {
+    graph [layout = dot, rankdir = LR]
+  node [shape = oval]
+  a [label = '@@1']
+  b [label = '@@2']
+  c [label = '@@3']
+  
+  a -> b
+  b -> c
+
+  }
+  
+  [1]: liste_name[1]
+  [2]: liste_name[2]
+  [3]: liste_name[3]
+
+  ",
+  height = 200)
+```
+With this causality diagram we understand that the GDP influences the number of athletes which influences the number of medals won.
+
+The GDP influences the number of athletes since through its investments in infrastructure, athletes training programs, athletes federations etc., the country attracts more athletes and encourages more people to become high performance athletes in their country. The possibility of financial support for athletes also encourages more people to invest in a professional sports career. In addition, a large GDP allows the country to develop more athletes and to identify and support more young athletic talents. This increases the talent pool available in a country. 
+
+Furthermore, the number of athletes influences the number of medals won because there is a greater representation of the country in the Olympic competition. Statistically, with a greater number of athletes, there is a greater chance of winning more medals. Finally, the motivational effect generated by a large number of athletes encourages athletes to give their best and to surpass themselves. 
+
+Additionally, it's important to recognize that there may be reverse causality at play, meaning that Olympic success could potentially influence a country's GDP. For example, a country's success at the Olympics may boost national pride and increase tourism, which could potentially stimulate economic growth.
+
+
+<center>
+
+### VII. Robustness
+  
+    
+</center> 
+
+
+In order to check the robustness of the baseline result, we add other control variables in the regression even if it is not possible to include all the relevant controls. 
+In addition to the variable number of athletes, the following table progressively includes as controls in the regression : the gender, the population, the sport expenditure and the number of hours per week spent on sport. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE,fig.align='center', results='asis'}
+fit3= lm(NumberMedals ~ GDP2016log+NumberAthletes+Sex,data = Datafinal2)
+fit4= lm(NumberMedals ~ GDP2016log+NumberAthletes+Sex+Populationlog,data = Datafinal2)
+fit5= lm(NumberMedals ~ GDP2016log+NumberAthletes+Sex+Populationlog+PercentLoisirsGDP,data = Datafinal2)
+fit6= lm(NumberMedals ~ GDP2016log+NumberAthletes+Sex+Populationlog+PercentLoisirsGDP+HoursperWeek,data = Datafinal2)
+
+stargazer(fit1,fit2,fit3,fit4,fit5,fit6,type="html",
+          title="Regression Table", single.row=TRUE,
+          ci=FALSE, ci.level=0.9, omit.stat=c("f", "ser"),covariate.labels = c("GDP in 2016 in Log","Number of Athletes","Gender","Population in Log","Sports expenditure","Number of hours dedicated to sports per week"), dep.var.caption ="Number of Medals")
+```
+
+When we add the control variables Gender, Population, Sports expenditure and Hours per week, the coefficients remains virtually unchanged in terms of magnitude, and the significativity remains the same. Thus, the model (with the variables GDP and number of athletes) is robust to the inclusion of these variables.
+
+When we add the control variable PercentLoisirsGDP, the number of observations falls from 192 to 135 and to 69 when we add HoursperWeek. This is related to the bias of our database which concerns only 69 countries when we consider these 2 variables.
+
+
+<center>
+
+### VIII. Heterogeneity
+  
+    
+</center> 
+
+
+But the fact that the coefficient is robust does not mean that it is homogeneous. To investigate whether the relationship differs from one category of sport to another, our variable of interest GDP should be interacted with the category of sport variable, which is equivalent to estimating the regression separately for each category of sport. We decide to keep Individual Sports Category (and consequently collective sports as dummy) because we have seen before that we have more individual sports observations (most frequent).
+
+$$NumberMedals = \alpha + \beta1 * ln GDP + \beta2 * SportIndiv + \beta3 * ln GDP * SportIndiv+ \varepsilon_i$$
+
+
+```{r message=FALSE, warning=FALSE,include=FALSE}
+
+fita= lm(NumberMedals ~ GDP2016log,data = Datafinal2)
+fitb= lm(NumberMedals ~ GDP2016log+SportCategory,data = Datafinal2)
+fitc= lm(NumberMedals ~ GDP2016log+SportCategory+GDP2016log*SportCategory,data = Datafinal2)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE,fig.align='center', results='asis'}
+stargazer(fita,fitb,fitc,type="html",
+          title="Regression Table", single.row=TRUE,
+          ci=FALSE, ci.level=0.9, omit.stat=c("f", "ser"),covariate.labels = c("Log of GDP in 2016","Individual Sports Category","Interaction between log of GDP in 2016 and the individual sports category"), dep.var.caption ="Number of Medals")
+```
+
+
+Everything else equal, column (2) shows that the category of sport is significantly different from 0 with 99% of confidence level. Individual sports is associated with a 3.318 higher number of medals relative to the collective sports.
+
+The formula Column (3) can be simplified as follow :
+
+* For collective sport (SportIndiv=0) :
+$$NumberMedals = \alpha + \beta1 * ln GDP + \varepsilon_i =-5.212 + 1.413 * ln GDP + \varepsilon_i$$ 
+* For individual sport (SportIndiv=1) :
+$$NumberMedals = (\alpha + \beta2) + (\beta1 + \beta3) * ln GDP + \varepsilon_i =-6.725 + 2.218 * ln GDP + \varepsilon_i$$ 
+
+For collective sports, an increase of the GDP by 1% increases the number of medals by 0.014 which is equivalent to 1 extra medal if the GDP increases by 103%.
+For individual sports, an increase the GDP by 1% increases the number of medals by 0.022 which is equivalent to 1 extra medal if the GDP increases by 57%.
+
+We can then conclude that there is an evidence of a heterogeneity of the effect across the category of sports individual/collective.
+
+Compared to collective sports, in the individual sports, there are more medals won on average. This may be due to the fact that individual sports cover a wider range of disciplines and therefore offer a greater opportunity to win medals : we saw previously that we have 2.7 more times medals won in individual sports than in collective sports. For example, track and field includes a multitude of running, jumping and throwing events. In addition, resources are more focused on the development of individual athletes with, for example, specialized coaches and personalized programs. Moreover, winning a medal allows the participating nations to get a return on the money invested annually in the training of elite athletes. However, while all of these elements are possible factors, they do vary from country to country.
+
+
+<center>
+
+### IX. Conclusion
+  
+    
+</center> 
+
+
+In this analysis we use data on the Olympic athletes of different countries as well as the number of medals obtained and the GDP of these countries, during the 2016 Olympic Games, to investigate the relationship between the GDP of a country and the number of medals won by the country. The estimation of this relationship relies on the fact that countries with very different GDPs participate in the same olympics games, such that the success of the countries in these games can be compared between the countries with different GDPs. 
+
+Results show that, everything else equal, an increase of 1% of GDP makes an increase of 0.017 in number of medals ; which means that GDP should increase by 75% to win an extra medal. We observe that the correlation mechanism takes place through the variable of the number of athletes that a country has for the Olympic Games : GDP increases the number of athletes which increases the number of medals won. 
+The baseline coefficient changes significantly when we add the control variable number of athletes. But then, the estimated coefficient appears to be robust to controlling the gender of the athletes, the population, the percentage of GDP spent in leasure and the number of hours of sport practiced per week. And results show an evidence of heterogeneity of the effect across the category of sports, between individual and collective sports. To win an extra medal, GDP should be increased by 57% for individual sports and 103% for collective sports.   
+
+Further studies can be carried out considering results of the other editions of Olympics games (not only Summer 2016) and taking into account the functional form of the GDP (polynomial of degree 2) in order to capture the non-linearity.
+
+
+  
+##### References 
+
+[1] Blais-Morisset, P., Boucher, V., & Fortin, B. (2017). L’impact des depenses publiques consacrees au sport sur les medailles olympiques. Revue economique, 68(4), 623-642
+
+[2] Comparaison entre les previsions et les medailles gagnees aux Jeux de Pekin, Wladimir Andreff, p. 241-247 
+
+[3] Sanela Skoric et Evica Obadic, Connection between State Funding and International Sporting Success: The Case of Croatia, published in November 2022
