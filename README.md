@@ -1,15 +1,9 @@
 # Olympic Medal Performance & Economic Power — Econometric Analysis
 
 ## Overview
+This project investigates the relationship between a country's economic resources and its performance at the 2016 Rio Summer Olympic Games.
 
-This project investigates the extent to which a country's economic power 
-is reflected in its performance at the Olympic Games, using data from the 
-**2016 Rio Summer Olympics**.
-
-The analysis is built around an OLS framework and identifies the 
-**number of athletes** as the key mediating channel between GDP and medal 
-count. Results are robust to the inclusion of gender, population, sport 
-expenditure, and time devoted to sport per week.
+Using cross-country data, the analysis examines the association between GDP and the number of Olympic medals won. It relies on OLS regression models, progressively introduces additional control variables, explores the role of delegation size, and investigates differences between individual and team sports.
 
 > **Group project** — Raphaëlle Dridi, Carla Le Durand, Eliot Lepetit  
 > CPES Economics — Université PSL, 2023
@@ -25,28 +19,25 @@ expenditure, and time devoted to sport per week.
 
 ## Main Findings
 
-- A **1% increase in GDP** leads to a 0.017 increase in medals won 
-  (i.e., GDP must increase by ~75% to win one extra medal).
-- The effect is **mediated by delegation size**: GDP → number of athletes 
-  → number of medals.
-- The baseline coefficient is **robust** to adding gender, population, 
-  sport expenditure and hours of sport per week as controls.
-- **Heterogeneity** by sport type: the GDP effect is stronger for 
-  individual sports (1 extra medal per +57% GDP) than collective sports 
-  (+103% GDP).
+- GDP is positively associated with the number of Olympic medals won across countries in the baseline OLS specification.
+- The analysis explores delegation size (number of athletes) as a potential channel linking a country's economic resources to its Olympic performance.
+- The positive association is examined across specifications including additional controls such as gender, population, public sport expenditure and time devoted to sport.
+- The analysis also explores differences between individual and team sports, with the estimated relationship varying across the two categories.
+
+These findings describe statistical associations in the 2016 Olympic cross-country sample and should not be interpreted as evidence of a causal effect of GDP on medal counts.
 
 ---
 
 ## Methodology
 
-- **Strategy:** OLS regression with progressive controls
-- **Dependent variable:** Number of medals won per country (2016)
-- **Key independent variable:** Log GDP (World Bank, 2016)
-- **Mediation analysis:** Number of athletes as mediating variable
-- **Robustness checks:** 6 nested specifications
-- **Heterogeneity analysis:** Interaction term — GDP × sport category 
-  (individual vs. collective)
-- **Tool:** R (RMarkdown), rendered as HTML report
+- **Empirical approach:** Ordinary Least Squares (OLS) regression.
+- **Outcome variable:** Number of medals won by each country at the 2016 Rio Summer Olympics.
+- **Main explanatory variable:** Country-level GDP in 2016.
+- **Additional controls:** Gender, population, public sport expenditure and time devoted to sport per week.
+- **Delegation size:** Explored as a potential explanatory channel through additional regression specifications.
+- **Robustness checks:** Six nested model specifications.
+- **Heterogeneity analysis:** Examination of differences between individual and team sports using an interaction term between GDP and sport category.
+- **Tools:** R and R Markdown.
 
 ---
 
@@ -83,7 +74,6 @@ expenditure, and time devoted to sport per week.
 
 - **R** (developed on R 4.x)
 - Key packages: `tidyverse`, `ggplot2`, `stargazer`, `prettydoc`  
-  *(install via `install.packages()` if needed)*
 
 ---
 
