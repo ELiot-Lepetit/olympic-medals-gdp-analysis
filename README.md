@@ -55,13 +55,13 @@ expenditure, and time devoted to sport per week.
 ├── Olympic_Games_Final_Report_CPES-2023.Rmd   # Full analysis (R Markdown)
 ├── Olympic-Games-Final-Report-CPES-2023.html  # Rendered HTML report
 └── Data/
-    ├── athlete_events.csv        # Olympic athletes & medals 1896–2016 (Kaggle)
     ├── GDP2016.xlsx              # GDP by country, 2016 (World Bank)
     ├── GDP2016PERCAPITA.xlsx     # GDP per capita, 2016 (World Bank)
     ├── Population2016.xlsx       # Population by country, 2016 (World Bank)
     ├── Loisirs.xlsx              # Public leisure & culture expenditure (IMF)
     ├── TimeExercicesperweek.xlsx # Hours of sport per week by country (Ipsos, 2021)
     └── Sportscollectifs.xlsx     # List of collective sports (manual classification)
+# athlete_events.csv is too large to be included
 ```
 
 ---
