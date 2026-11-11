@@ -90,4 +90,4 @@ expenditure, and time devoted to sport per week.
 ## Authors
 
 **Raphaëlle Dridi, Carla Le Durand, Eliot Lepetit**  
-CPES — Université PSL, 2023
+CPES — Université PSL, 2023 
